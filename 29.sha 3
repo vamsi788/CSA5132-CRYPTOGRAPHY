@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#define STATE_SIZE 25
+#define LANE_SIZE 64
+#define CAPACITY_LANES 2 // Number of lanes in the capacity portion
+
+// Function to check if all lanes have at least one nonzero bit
+bool allNonZero(uint64_t state[STATE_SIZE]) {
+    for (int i = 0; i < STATE_SIZE; i++) {
+        if (state[i] == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    uint64_t state[STATE_SIZE] = {0}; // Initial state with capacity portion all zeros
+    int iterations = 0;
+
+    // Simulate SHA-3 processing until all lanes have at least one nonzero bit
+    while (!allNonZero(state)) {
+        // Assuming some processing steps here (permutations)
+        // For simplicity, we're not performing actual permutations
+
+        // Increment iterations
+        iterations++;
+
+        // Update the state (just a dummy update for simulation)
+        for (int i = 0; i < STATE_SIZE; i++) {
+            state[i] |= (1ULL << iterations); // Set a bit in each lane based on the iteration count
+        }
+    }
+
+    // Print the number of iterations required
+    printf("Number of iterations required: %d\n", iterations);
+
+    return 0;
+}
