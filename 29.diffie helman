@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+// Function to perform modular exponentiation (a^b mod q)
+long long int mod_exp(long long int a, long long int b, long long int q) {
+    long long int result = 1;
+    a = a % q;
+
+    while (b > 0) {
+        if (b & 1)
+            result = (result * a) % q;
+        b = b >> 1;
+        a = (a * a) % q;
+    }
+
+    return result;
+}
+
+// Function to generate a random number in a given range
+long long int generate_random_number(long long int min, long long int max) {
+    return rand() % (max - min + 1) + min;
+}
+
+int main() {
+    long long int p, g; // Public parameters
+    long long int a_secret, b_secret; // Secret numbers chosen by Alice and Bob
+    long long int A, B; // Public values calculated by Alice and Bob
+    long long int key_A, key_B; // Shared keys
+
+    // Public parameters (p and g)
+    p = 23; // Prime number
+    g = 5;  // Generator
+
+    // Alice's secret number
+    a_secret = generate_random_number(2, p - 2);
+
+    // Bob's secret number
+    b_secret = generate_random_number(2, p - 2);
+
+    // Calculate public values
+    A = mod_exp(g, a_secret, p);
+    B = mod_exp(g, b_secret, p);
+
+    // Calculate shared keys
+    key_A = mod_exp(B, a_secret, p);
+    key_B = mod_exp(A, b_secret, p);
+
+    printf("Alice's secret number: %lld\n", a_secret);
+    printf("Bob's secret number: %lld\n", b_secret);
+
+    printf("Public value calculated by Alice (A): %lld\n", A);
+    printf("Public value calculated by Bob (B): %lld\n", B);
+
+    printf("Shared key calculated by Alice: %lld\n", key_A);
+    printf("Shared key calculated by Bob: %lld\n", key_B);
+
+    return 0;
+}
