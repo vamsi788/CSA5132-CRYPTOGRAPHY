@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+
+// Function to calculate GCD (Greatest Common Divisor)
+int gcd(int a, int b) {
+    int temp;
+    while (b != 0) {
+        temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+// Function to perform RSA encryption
+int rsa_encrypt(int plaintext, int e, int n) {
+    int ciphertext;
+    ciphertext = fmod(pow(plaintext, e), n);
+    return ciphertext;
+}
+
+// Function to perform RSA decryption
+int rsa_decrypt(int ciphertext, int d, int n) {
+    int plaintext;
+    plaintext = fmod(pow(ciphertext, d), n);
+    return plaintext;
+}
+
+int main() {
+    // Bob's RSA parameters
+    int p = 61; // prime number
+    int q = 53; // prime number
+    int n = p * q; // modulus
+    int phi = (p - 1) * (q - 1); // Euler's totient function
+    int e = 65537; // public exponent (commonly used)
+    int d = 37231; // private exponent
+
+    // Alice's message (plaintext)
+    char message[] = "HELLO";
+
+    // Encrypt each character of the message separately using RSA
+    printf("Encrypted message: ");
+    for (int i = 0; i < strlen(message); i++) {
+        if (message[i] >= 'A' && message[i] <= 'Z') {
+            int plaintext = message[i] - 'A'; // Convert character to number (A=0, B=1, ..., Z=25)
+            int ciphertext = rsa_encrypt(plaintext, e, n);
+            printf("%d ", ciphertext);
+        } else {
+            printf("%c ", message[i]); // If character is not in A-Z range, print as is
+        }
+    }
+    printf("\n");
+
+    // Decrypt each character of the message separately using RSA
+    printf("Decrypted message: ");
+    for (int i = 0; i < strlen(message); i++) {
+        if (message[i] >= 'A' && message[i] <= 'Z') {
+            int ciphertext = message[i] - 'A'; // Convert character to number (A=0, B=1, ..., Z=25)
+            int plaintext = rsa_decrypt(ciphertext, d, n);
+            printf("%c", plaintext + 'A'); // Convert number back to character
+        } else {
+            printf("%c", message[i]); // If character is not in A-Z range, print as is
+        }
+    }
+    printf("\n");
+
+    return 0;
+}
