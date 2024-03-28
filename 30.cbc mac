@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <string.h>
+
+// AES block size
+#define BLOCK_SIZE 16
+
+// Function to perform AES encryption (dummy function)
+void aes_encrypt(const unsigned char *plaintext, unsigned char *ciphertext) {
+    // Dummy AES encryption function (replace with actual AES encryption)
+    // For simplicity, we'll just copy the plaintext as ciphertext
+    memcpy(ciphertext, plaintext, BLOCK_SIZE);
+}
+
+// Function to calculate CBC-MAC
+void cbc_mac(const unsigned char *key, const unsigned char *message, unsigned char *mac) {
+    unsigned char ciphertext[BLOCK_SIZE];
+    unsigned char iv[BLOCK_SIZE] = {0}; // Initialization Vector
+
+    // Encrypt the message using CBC mode
+    aes_encrypt(message, ciphertext);
+
+    // XOR the ciphertext with the previous block (which is the IV in this case)
+    for (int i = 0; i < BLOCK_SIZE; i++) {
+        ciphertext[i] ^= iv[i];
+    }
+
+    // Copy the result as the MAC
+    memcpy(mac, ciphertext, BLOCK_SIZE);
+}
+
+int main() {
+    unsigned char key[BLOCK_SIZE] = "0123456789ABCDEF"; // 128-bit key
+    unsigned char message[BLOCK_SIZE] = "This is a test"; // One-block message
+    unsigned char mac[BLOCK_SIZE]; // MAC
+
+    // Calculate the CBC-MAC for the one-block message
+    cbc_mac(key, message, mac);
+
+    printf("MAC for the one-block message: ");
+    for (int i = 0; i < BLOCK_SIZE; i++) {
+        printf("%02X", mac[i]);
+    }
+    printf("\n");
+
+    // Construct the two-block message X || (X ⊕ T)
+    unsigned char two_block_message[2 * BLOCK_SIZE];
+    memcpy(two_block_message, message, BLOCK_SIZE); // Copy X
+    for (int i = 0; i < BLOCK_SIZE; i++) {
+        two_block_message[BLOCK_SIZE + i] = message[i] ^ mac[i]; // Append (X ⊕ T)
+    }
+
+    // Calculate the CBC-MAC for the two-block message
+    cbc_mac(key, two_block_message, mac);
+
+    printf("MAC for the two-block message: ");
+    for (int i = 0; i < BLOCK_SIZE; i++) {
+        printf("%02X", mac[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
