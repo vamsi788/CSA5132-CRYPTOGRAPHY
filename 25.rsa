@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+// Function to calculate GCD (Greatest Common Divisor)
+int gcd(int a, int b) {
+    int temp;
+    while (b != 0) {
+        temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+// Function to perform RSA encryption
+int rsa_encrypt(int plaintext, int e, int n) {
+    int ciphertext;
+    ciphertext = fmod(pow(plaintext, e), n);
+    return ciphertext;
+}
+
+int main() {
+    int p, q, n, e; // public parameters
+    int plaintext, ciphertext;
+
+    // Assume the public parameters are known
+    p = 61; // prime number
+    q = 53; // prime number
+    n = p * q; // modulus
+    e = 17; // public exponent
+
+    // Example plaintext block
+    plaintext = 1234;
+
+    // Check if plaintext has a common factor with n
+    if (gcd(plaintext, n) > 1) {
+        printf("Plaintext has a common factor with n. Vulnerability detected.\n");
+    } else {
+        printf("Plaintext does not have a common factor with n. No immediate vulnerability detected.\n");
+    }
+
+    // Encrypt plaintext using RSA
+    ciphertext = rsa_encrypt(plaintext, e, n);
+    printf("Ciphertext: %d\n", ciphertext);
+
+    return 0;
+}
